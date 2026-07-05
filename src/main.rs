@@ -14,7 +14,13 @@ struct Args {
 
 
 fn main() {
-    let args = Args::parse();
+    let music_args = Args::parse();
+    let directory = music_args.directory;
+    let file = music_args.file;
+    println!("{directory:?}");
+    println!("{file:?}");
+
+    
 }
 
 
