@@ -1,9 +1,20 @@
 use lofty;
-use std::env;
-// here comes the fucking worst rust code ever
+use clap::Parser;
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+  /// Use when indicating a directory to 'mass scan'
+ #[arg(short,long)]
+ directory: Option<String>,
+ /// Use when indicating a singular file, relative pathing
+ #[arg(short,long)]
+ file: Option<String>,
+
+}
 
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    dbg!(args);
+    let args = Args::parse();
 }
+
+
