@@ -19,6 +19,26 @@ fn main() {
     let file = music_args.file;
     println!("{directory:?}");
     println!("{file:?}");
+    match (directory,file) {
+        (Some(dir),None) => {
+
+        }
+        (None, Some(f)) => {
+
+
+        }
+        (None, None) => {
+            eprintln!("gotta pass either --directory or --file");
+            std::process::exit(1);
+
+        }
+        (Some(_),Some(_)) => {
+            eprintln!("One or the other, please.");
+            std::process::exit(1)
+
+        }
+
+    }
 
     
 }
