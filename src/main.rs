@@ -1,8 +1,8 @@
 use lofty;
-use lofty::ogg::VorbisComments;
+use lofty::config::WriteOptions;
 use lofty::read_from_path;
 use clap::Parser;
-use lofty::file::{TaggedFile, TaggedFileExt};
+use lofty::file::{AudioFile, TaggedFile, TaggedFileExt};
 use lofty::tag::{ItemKey, Tag, TagType};
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -15,7 +15,7 @@ struct Args {
  file: Option<String>,
 
 }
-
+// this thing is being used wtf?!
 enum ParseResult {
     Handled,
     Skipped,
@@ -37,10 +37,13 @@ fn parse_file(file: &mut TaggedFile) -> Option<ParseResult> {
     
     let mut result = ParseResult::Skipped;
 
-    for tag_type in [TagType::VorbisComments, TagType::Id3v2] {
+    for tag_type in [TagType::VorbisComments] {
         // since unfortunately, f.tags_mut() doesnt exist, i gotta do it the manual way
         if let Some(tag) = file.tag_mut(tag_type) {
             // TODO: actually... strip the fucking tags?
+            for key in &fuck_you_murder_list {
+                tag.remove_key(*key)
+            }
             result = ParseResult::Handled;
         }
     }
@@ -48,7 +51,7 @@ fn parse_file(file: &mut TaggedFile) -> Option<ParseResult> {
     Some(result)
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let music_args = Args::parse();
     let directory = music_args.directory;
     let file = music_args.file;
@@ -60,7 +63,9 @@ fn main() {
         }
         (None, Some(f)) => {
             println!("Scanning File!");
-
+            let mut file = read_from_path(&f)?;
+            parse_file(&mut file);
+            file.save_to_path(f, WriteOptions::default())?;
 
         }
         (None, None) => {
@@ -75,7 +80,7 @@ fn main() {
         }
 
     }
-
+    Ok(())
     
 }
 
