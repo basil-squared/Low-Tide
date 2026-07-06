@@ -1,6 +1,6 @@
 # Low Tide
 
-Has this ever happened to you? You want to put on your favorite flacs whenever the big tidal-tags of doom and despair come and wreck your day, making your treasured songs unplayable by any media player with meaning? Well, I have the answer for you! Low Tide, with a simple command, clears your beautiful songs of those pesky tags so that you may listen in peace.
+Has this ever happened to you? You want to put on your favorite flacs whenever the big tidal-specific tags of doom and despair come and wreck your day, making your treasured songs unplayable by any media player with meaning? Well, I have the answer for you! Low Tide, with a simple command, clears your beautiful songs of those pesky tags so that you may listen in peace.
 
 ## Usage
 
