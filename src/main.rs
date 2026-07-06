@@ -39,9 +39,9 @@ fn parse_file(file: &mut TaggedFile) -> Option<ParseResult> {
         // since unfortunately, f.tags_mut() doesnt exist, i gotta do it the manual way
 
         if let Some(tag) = file.tag_mut(tag_type) {
-            // TODO: actually... strip the fucking tags?
+            
             for key in &fuck_you_murder_list {
-                println!(
+                log::info!(
                     "Removing {key:?} from {}",
                     tag.get_string(ItemKey::TrackTitle)?
                 );
@@ -55,17 +55,18 @@ fn parse_file(file: &mut TaggedFile) -> Option<ParseResult> {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    pretty_env_logger::init();
     let music_args = Args::parse();
     let directory = music_args.directory;
     let file = music_args.file;
-    println!("{directory:?}");
-    println!("{file:?}");
+   
     match (directory, file) {
         (Some(dir), None) => {
             // Use walkdir because pretty much everyone's libraries are in subdirectories anyways. unless theyre evil people.
             for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
                 if entry.file_type().is_file() {
                     let path = entry.path();
+                    // im only supporting flac because tidal is flac anyways.
                     if path.extension().and_then(|e| e.to_str()) == Some("flac") {
                     // TODO: file processing but im already kinda balls deep into this and im almost done! so! little break time!
                     }
@@ -73,18 +74,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         (None, Some(f)) => {
-            println!("Scanning File!");
+            log::info!("Reading File...");
             let mut file = read_from_path(&f)?;
             parse_file(&mut file);
-            file.save_to_path(f, WriteOptions::default())?;
-            println!("Success!")
+            file.save_to_path(&f, WriteOptions::default())?;
+            log::info!("Successfully processed {f}")
         }
         (None, None) => {
-            eprintln!("gotta pass either --directory or --file");
+            log::error!("Missing Argument \"--directory\" or \"--file\" ");
             std::process::exit(1);
         }
         (Some(_), Some(_)) => {
-            eprintln!("One or the other, please.");
+            log::error!("Too many arguments. One or the other, please.");
             std::process::exit(1)
         }
     }
