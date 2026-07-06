@@ -62,6 +62,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{file:?}");
     match (directory, file) {
         (Some(dir), None) => {
+            // Use walkdir because pretty much everyone's libraries are in subdirectories anyways. unless theyre evil people.
             for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
                 if entry.file_type().is_file() {
                     let path = entry.path();
