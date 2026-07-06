@@ -28,5 +28,5 @@ It even searches your subdirectories too!
 
 This project is licensed under the GNU General Public License v3.0, see [LICENSE.md](LICENSE.md) for details.
 
-[!IMPORTANT]
-This project is not affiliated with, endorsed by, or associated with TIDAL in any way.
+> [!IMPORTANT]
+> This project is not affiliated with, endorsed by, or associated with TIDAL in any way.
