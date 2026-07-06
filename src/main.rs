@@ -35,20 +35,17 @@ fn parse_file(file: &mut TaggedFile) -> Option<ParseResult> {
 
     let mut result = ParseResult::Skipped;
 
-    for tag_type in [TagType::VorbisComments] {
-        // since unfortunately, f.tags_mut() doesnt exist, i gotta do it the manual way
+    // since unfortunately, f.tags_mut() doesnt exist, i gotta do it the manual way
 
-        if let Some(tag) = file.tag_mut(tag_type) {
-            
-            for key in &fuck_you_murder_list {
-                log::info!(
-                    "Removing {key:?} from {}",
-                    tag.get_string(ItemKey::TrackTitle)?
-                );
-                tag.remove_key(*key)
-            }
-            result = ParseResult::Handled;
+    if let Some(tag) = file.tag_mut(TagType::VorbisComments) {
+        for key in &fuck_you_murder_list {
+            log::info!(
+                "Removing {key:?} from {}",
+                tag.get_string(ItemKey::TrackTitle).unwrap()
+            );
+            tag.remove_key(*key)
         }
+        result = ParseResult::Handled;
     }
 
     Some(result)
@@ -59,16 +56,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let music_args = Args::parse();
     let directory = music_args.directory;
     let file = music_args.file;
-   
+
     match (directory, file) {
         (Some(dir), None) => {
             // Use walkdir because pretty much everyone's libraries are in subdirectories anyways. unless theyre evil people.
             for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+                log::info!("Entry Found");
                 if entry.file_type().is_file() {
                     let path = entry.path();
+                    log::info!("Grabbed {path:?}");
                     // im only supporting flac because tidal is flac anyways.
                     if path.extension().and_then(|e| e.to_str()) == Some("flac") {
-                    // TODO: file processing but im already kinda balls deep into this and im almost done! so! little break time!
+                        log::info!("FLAC found! parsing...");
+                        let mut file = read_from_path(&path)?;
+                        parse_file(&mut file);
+                        file.save_to_path(&path, WriteOptions::default())?;
+                        log::info!("Successfully processed {path:?}")
                     }
                 }
             }
